@@ -6,8 +6,10 @@ This file creates your application.
 """
 
 from app import app
+from app import mail
+from flask_mail import Message
 from flask import render_template, request, redirect, url_for, flash
-
+from forms import ContactForm
 
 ###
 # Routing for your application.
@@ -25,9 +27,44 @@ def about():
     return render_template('about.html', name="Mary Jane")
 
 
+@app.route('/contact', methods=["GET","POST"])
+def contact():
+    """Render the website's about page."""
+    form = ContactForm()
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            # Note the difference when retrieving form data using Flask-WTF
+            # Here we use myform.firstname.data instead of request.form['firstname']
+            name = form.name.data
+            subject = form.subject.data
+            email = form.email.data
+            message = form.text.data
+    
+            flash('You have successfully filled out the form', 'success')
+            msg = Message(subject, sender=(name, email), recipients=["b3a0bc2142-fcc8cc@inbox.mailtrap.io"])
+            msg.body = message
+            mail.send(msg)
+            
+            flash('You have successfully sent your message', 'success')
+            return redirect(url_for('/'),  name=name, email=email, subject=subject, message=message)
+            
+        flash_errors(form)
+    return render_template('contact.html', form=form)
+
+
 ###
 # The functions below should be applicable to all Flask apps.
 ###
+
+# Flash errors from the form if validation fails
+def flash_errors(form):
+    for field, errors in form.errors.items():
+        for error in errors:
+            flash(u"Error in the %s field - %s" % (
+                getattr(form, field).label.text,
+                error
+            ), 'danger')
+
 
 @app.route('/<file_name>.txt')
 def send_text_file(file_name):
