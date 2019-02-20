@@ -3,20 +3,25 @@
 {% block main %}
     <h2>Contact Form</h2>
 
-    <form action="/" method="POST">
+    <form action="/contact
+    " method="POST">
         {{ form.csrf_token }}
         
         {% include 'flash_messages.html' %}
         <div class="form-group">
+            {{ form.name.label }}
              {{ form.name(class="form-control") }}
         </div>
         <div class="form-group">
-            {{ form.email(class="form-control", placeholder="jdoe@example.com") }}
+            {{ form.email.label }}
+            {{ form.email(class="form-control") }}
         </div>
         <div class="form-group">
+            {{ form.subject.label }}
            {{ form.subject(class="form-control") }}
         </div>
         <div class="form-group">
+            {{ form.text.label }}
             {{ form.text(class="form-control") }}
         </div>
         

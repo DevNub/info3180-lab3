@@ -46,7 +46,7 @@ def contact():
             mail.send(msg)
             
             flash('You have successfully sent your message', 'success')
-            return redirect(url_for('/'),  name=name, email=email, subject=subject, message=message)
+            return redirect(url_for('home'))
             
         flash_errors(form)
     return render_template('contact.html', form=form)
